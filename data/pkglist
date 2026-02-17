@@ -26,6 +26,9 @@ ranger
 hyfetch@testing
 fastfetch
 exiftool
+efibootmgr
+ffmpeg
+imagemagick
 doas
 pavucontrol
 brightnessctl
