@@ -25,6 +25,7 @@ vim
 ranger
 hyfetch@testing
 fastfetch
+exiftool
 doas
 pavucontrol
 brightnessctl
