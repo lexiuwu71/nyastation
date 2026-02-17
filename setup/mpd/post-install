@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# disable mpd system service
+$UAC systemctl disable mpd.service
+$UAC systemctl disable mpd.socket

@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+
+source ./data/pkg
+
+add mpd ncmpcpp mpc timidity
+
+MUSIC_DIR="$HOME/Music"
+PLAYLIST_DIR="$HOME/Music/!Playlist"
+MPD_DIR="$HOME/.mpd"
+NCMPCPP_DIR="$HOME/.ncmpcpp"
+
+ADDR="127.0.0.1"
+PORT=6600
+
+# ensure directories exist
+mkdir -p "$MUSIC_DIR" \
+         "$PLAYLIST_DIR" \
+         "$MPD_DIR" \
+         "$NCMPCPP_DIR"
+
+# mpd config
+cat << EOF > $MPD_DIR/mpd.conf
+music_directory "$MUSIC_DIR"
+playlist_directory "$PLAYLIST_DIR"
+db_file "$MPD_DIR/mpd.db"
+log_file "$MPD_DIR/mpd.log"
+pid_file "$MPD_DIR/mpd.pid"
+state_file "$MPD_DIR/mpdstate"
+
+audio_output {
+    type "pipewire"
+    name "pipewire audio"
+}
+
+#audio_output {
+#    type "alsa"
+#    name "alsa for audio soundcard"
+#    mixer_type "software"
+#}
+
+#audio_output {
+#    type "pulse"
+#    name "pulse audio"
+#}
+
+#audio_output {
+#    type "fifo"
+#    name "my_fifo"
+#    path "/tmp/mpd.fifo"
+#    format "44100:16:2"
+#}
+
+bind_to_address "$ADDR"
+port "$PORT"
+EOF
+
+# ncmpcpp config
+cat << EOF > $NCMPCPP_DIR/config
+[mpd]
+mpd_music_dir = "$MUSIC_DIR"
+mpd_host = "$ADDR"
+mpd_port = "$PORT"
+mpd_crossfade_time = "2"
+
+autocenter_mode = "yes"
+follow_now_playing_lyrics = "yes"
+ignore_leading_the = "yes"
+ignore_diacritics = "yes"
+default_place_to_search_in = "database"
+
+## Display Modes ##
+playlist_editor_display_mode = "columns"
+search_engine_display_mode = "columns"
+browser_display_mode = "columns"
+playlist_display_mode = "columns"
+
+## General Colors ##
+colors_enabled = "yes"
+main_window_color = "white"
+header_window_color = "cyan"
+volume_color = "green"
+statusbar_color = "white"
+progressbar_color = "cyan"
+progressbar_elapsed_color = "white"
+
+## Song List ##
+song_columns_list_format = "(10)[blue]{l} (30)[green]{t} (30)[magenta]{a} (30)[yellow]{b}"
+song_list_format = "{\$7%a - \$9}{\$5%t\$9}|{\$5%f\$9}\$R{\$6%b \$9}{\$3%l\$9}"
+
+## Current Item ##
+current_item_prefix = "\$(blue)\$r"
+current_item_suffix = "$/r\$(end)"
+current_item_inactive_column_prefix = "\$(cyan)\$r"
+
+## Alternative Interface ##
+user_interface = "alternative"
+alternative_header_first_line_format = "\$0\$aqqu\$/a {\$6%a\$9 - }{\$3%t\$9}|{\$3%f\$9} \$0\$atqq\$/a\$9"
+alternative_header_second_line_format = "{{\$4%b\$9}{ [\$8%y\$9]}}|{\$4%D\$9}"
+
+## Classic Interface ##
+song_status_format = " \$6%a \$7⟫⟫ \$3%t \$7⟫⟫ \$4%b "
+
+## Navigation ##
+cyclic_scrolling = "yes"
+header_text_scrolling = "yes"
+jump_to_now_playing_song_at_start = "yes"
+lines_scrolled = "2"
+
+## Other ##
+system_encoding = "utf-8"
+regular_expressions = "extended"
+
+## Selected tracks ##
+selected_item_prefix = "* "
+discard_colors_if_item_is_selected = "yes"
+
+## Seeking ##
+incremental_seeking = "yes"
+seek_time = "1"
+
+## Visibility ##
+header_visibility = "yes"
+statusbar_visibility = "yes"
+titles_visibility = "yes"
+
+## Progress Bar ##
+progressbar_look =  "=>-"
+
+## Now Playing ##
+now_playing_prefix = "> "
+centered_cursor = "yes"
+
+# Misc
+display_bitrate = "yes"
+enable_window_title = "yes"
+empty_tag_marker = ""
+EOF
+
+#        <!-- Keybindings to control mpd -->
+#        <keybind key="XF86AudioStop">
+#            <action name="Execute">
+#                <command>mpc stop</command>
+#            </action>
+#        </keybind>
+#        <keybind key="XF86AudioPlay">
+#            <action name="Execute">
+#                <command>mpc toggle</command>
+#            </action>
+#        </keybind>
+#        <keybind key="XF86AudioPrev">
+#            <action name="Execute">
+#                <command>mpc prev</command>
+#            </action>
+#        </keybind>
+#        <keybind key="XF86AudioNext">
+#            <action name="Execute">
+#                <command>mpc next</command>
+#            </action>
+#        </keybind>
