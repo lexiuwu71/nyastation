@@ -1,0 +1,15 @@
+Declarative package maintainer and dotfiles currently built
+on alpine linux! meow :3
+
+'nyastation <action>'
+
+Edit 'nyastation' to add and remove packages, edit dotfiles,
+and overall just configure things
+
+ACTIONS:
+  SETUP:
+    Rebuild buffer package list, copy dotfiles, etc.
+  BUILD:
+    Install package list from buffer package list.
+  HELP:
+    Show this message.

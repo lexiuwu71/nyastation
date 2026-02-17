@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+setterm -cursor off;while true; do clear;
+echo -n " $(date +'%H:%M')" | figlet -f future
+echo -n "  "; date +'%a %x'
+#echo -n "       "; tmux-weather;
+#curl wttr.in/\?format=3 2>/dev/null | cut -d':' -f2;
+sleep 60; done

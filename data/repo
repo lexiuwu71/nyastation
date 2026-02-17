@@ -1,0 +1,6 @@
+#!/bin/sh
+
+UAC="doas"
+VER="3.23"
+
+echo -ne "#/media/cdrom/apks\nhttp://dl-cdn.alpinelinux.org/alpine/v$VER/main\nhttp://dl-cdn.alpinelinux.org/alpine/v$VER/community\n@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing\n" | $UAC tee /etc/apk/repositories

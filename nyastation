@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+export UAC="doas"
+export NYASTATION="$HOME/nyastation"
+cd $NYASTATION
+
+# Source tools and variables
+source ./data/color
+source ./data/debug
+source ./data/pkg
+
+# Print the logo
+logo() {
+	clear
+	figlet 'NyaStation :3' | lolcat
+	printf "\n"$COLOR_5"welcome, $USER!$RST\n"
+	printf ""$COLOR_4"$HOSTNAME $MACHTYPE"$RST"\n"
+}
+
+# Run a setup script
+install() {
+	./setup/$1/install
+	debug ok "Setup '$1'!"
+}
+
+post-install() {
+	./setup/$1/post-install
+	debug ok "Post Setup '$1'!"
+}
+
+# Run a list of setup scripts
+setup() {
+	# This is where you can modify what gets installed when you rebuild
+	install system
+	install doas
+	install suckless
+	install uwufetch
+	install apps
+	#install mpd
+}
+
+post-setup() {
+	echo "post setup"
+	#post-install mpd
+	post-install suckless
+}
+
+add figlet lolcat@testing bash bash-completion shadow
+# Check if missing dependencies
+if [[ -z $(command -v figlet) ]] || [[ -z $(command -v lolcat) ]]; then
+	debug error "Missing dependencies, installing..."
+	build
+fi
+
+logo
+case $1 in
+	'setup')
+		setup
+		;;
+	'build')
+		build
+		post-setup
+		;;
+	'help')
+		printf "$(cat $HOME/nyastation/data/message)\n\n"
+		;;
+	*)
+		echo "$1"
+		printf "$(cat $HOME/nyastation/data/message)\n\n"
+		debug warn "Syntax error command, '$1' does not exist!"
+		;;
+esac

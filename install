@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+UAC="doas"
+
+cd $HOME/nyastation
+
+./data/repo
+echo "Setup repos"
+
+packages="lsblk gptfdisk btrfs-progs e2fsprogs cryptsetup lvm2 figlet lolcat@testing lsblk cfdisk bash bash-completion shadow"
+$UAC apk add $packages
+
+rm ./data/pkglist
+for pkg in $packages; do
+	echo $pkg >> ./data/pkglist
+done
+cat ./data/pkglist
+
+chsh -s /bin/bash
+
+
+
+
+#lsblk
+#echo "Which drive would you like to use? (sda) "
+#read drive
+#modprobe btrfs
+#dd if=/dev/zero of=/dev/"$drive"  bs=512  count=1

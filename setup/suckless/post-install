@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+source ./data/color
+source ./data/pkg
+
+echo "Allow this app to make changes to your computer?"
+$UAC echo ""$CYAN"Installing!"$RST""
+if [[ $? -eq 1 ]]; then
+	echo ""$RED"Not allowed!"$RST" Aborting..."
+	exit 1
+fi
+
+cd $NYASTATION/setup/suckless
+
+for program in dwm st dmenu slock; do
+	dir=$(echo "$program"*)
+	if [[ ! -d $dir ]]; then
+		archive=$(echo "./src/"$program"/"$program"*.tar.gz")
+		tar -xzf $archive
+		echo ""$GREEN" * "$RST"Extracted "$program" source"
+		dir=$(echo "$program"*)
+	fi	
+	cd "$dir"
+	make > /dev/null
+	$UAC make install > /dev/null
+	echo ""$GREEN" * "$RST"Installed "$program""
+	cd ..
+done

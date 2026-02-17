@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+# convert to compressed mp3
+# copy the image, as 320x320 bmp
+# convert list of songs to, m3u playlist with flac extenstion and m3u8 playlists with mp3 for rockbox
+# move everything to a ipod folder, so it can just be copied quickly to the ipod
+
+import os
+import sys
+import subprocess
+import threading
+
+from pathlib import Path
+home = Path.home()
+
+MUSIC_DIR=os.path.join(home, "Music")
+PLAYLIST_DIR=os.path.join(MUSIC_DIR, "!Playlist")
+
+OUTPUT_DIR=os.path.join(home, ".ipod_music")
+OUTPUT_PLAYLIST_DIR=os.path.join(OUTPUT_DIR, "Playlists")
+
+IMG_FORMATS=(".JPG", ".JPEG", ".PNG")
+
+def convert_song(_if, _of, _ext, _ffmpeg_args=["-vn", "-ar", "44100", "-ac", "2", "-b:a", "192k"]):
+    of = f"{os.path.join(OUTPUT_DIR, _of)}.{_ext}"
+    if os.path.isfile(of):
+        print(f"'{of}' already exists!")
+    else:
+        command = ["ffmpeg", "-i", os.path.join(MUSIC_DIR, _if), "-hide_banner", "-loglevel", "error"]
+        for i in _ffmpeg_args:
+            command.append(i)
+        command.append(of)
+        os.makedirs(os.path.dirname(os.path.join(OUTPUT_DIR, _of)), exist_ok=True)
+        subprocess.run(command, check=True)
+        print(f"converted: '{of}'")
+
+def convert_playlist(_file):
+    with open(os.path.join(PLAYLIST_DIR, _file), "r") as file:
+        orig_list = file.read()
+    playlist = orig_list.strip().split("\n")
+    for idx, song in enumerate(playlist):
+        if song.endswith(".flac"):
+            playlist[idx] = f"/<HDD0>/{song[:-5]}.mp3"
+    final = ""
+    for i in playlist:
+        final = f"{final}\n{i}"
+    os.makedirs(OUTPUT_PLAYLIST_DIR, exist_ok=True)
+    with open(os.path.join(OUTPUT_PLAYLIST_DIR, f"{_file}8"), "w") as file:
+        file.write(final)
+    print(f"converted playlist: '{_file[:-4]}'")
+
+def convert_image(_path, width=320):
+    album_dir = os.path.join(MUSIC_DIR, _path)
+    images = []
+    for i in os.listdir(album_dir):
+        if i.upper().endswith(IMG_FORMATS):
+            images.append(i)
+    if len(images) > 1:
+        print("more than one image; '{_path}''")
+        return 1
+    of=os.path.join(OUTPUT_DIR, _path, "cover.bmp")
+    os.makedirs(os.path.dirname(os.path.join(OUTPUT_DIR, of)), exist_ok=True)
+    if os.path.isfile(of):
+        print(f"'{of}' already exists!")
+        return 0
+    command = ["ffmpeg", "-i", os.path.join(album_dir, images[0]), "-hide_banner", "-loglevel", "error", "-vf", f"scale={width}:-1", of]
+    subprocess.run(command, check=True)
+    print(f"converted '{_path}' cover art")
+
+if __name__ == "__main__":
+    convert_song("Various Artists/Edgerunners OST FLAC/1.10.I Really Want to Stay at Your House.flac","Various Artists/Edgerunners OST FLAC/1.10.I Really Want to Stay at Your House", "mp3")
+    convert_image("Various Artists/Edgerunners OST FLAC")
+    convert_playlist("testplaylist.m3u")

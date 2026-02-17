@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+source ./data/color
+source ./data/pkg
+
+add netsurf audacious libreoffice krita inkscape mpv vlc librewolf

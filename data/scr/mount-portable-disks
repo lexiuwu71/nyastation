@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+UAC=doas
+$UAC mount /dev/nvme0n1p10 /storage/meow

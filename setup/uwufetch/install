@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+source ./data/color
+source ./data/pkg
+
+echo "Allow this app to make changes to your computer?"
+$UAC echo ""$CYAN"Installing!"$RST""
+if [[ $? -eq 1 ]]; then
+	echo ""$RED"Not allowed!"$RST" Aborting..."
+	exit 1
+fi
+
+cd $NYASTATION/setup/uwufetch
+
+program="uwufetch"
+dir=$(echo "$program"*)
+if [[ ! -d $dir ]]; then
+	archive=$(echo "./src/"$program"*.tar.gz")
+	tar -xzf $archive
+	echo ""$GREEN" * "$RST"Extracted "$program" source"
+fi
+cd $dir
+$UAC ./install
+echo ""$GREEN" * "$RST"Installed "$program""
+cd ..

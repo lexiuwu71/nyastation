@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+debug() {
+	if (( $# >= 2 )); then
+		debugtime=$(date +'%H:%M:%S')
+		case $1 in
+			'log')	
+				echo -e "[LOG] [$debugtime] $2" >&2
+				;;
+			'warn')
+				echo -e "$YELLOW$BOLD[WARN] [$debugtime] $2$RST" >&2
+				;;
+			'error')
+				echo -e "$RED$BOLD[ERROR] [$debugtime] $2$RST" >&2
+				;;
+			'ok')
+				echo -e "$CYAN$BOLD[ OK ] [$debugtime] $2$RST" >&2
+				;;
+			*)
+				echo "Invalid Syntax" >&2
+				;;
+		esac
+	else
+		echo -e "Please specify arguments.\n'debug (log, warn, error, ok) <message>'\n\nAnd make sure to have 'color' initalized!" >&2
+	fi
+}

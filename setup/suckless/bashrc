@@ -1,0 +1,39 @@
+export PATH=~/.config/nyafish/bin:$PATH
+export PATH=$PATH:~/nyastation/data/scr
+
+#if [[ -z "$DISPLAY" ]] && [[ $(tty) = /dev/tty1 ]]; then
+#  start-hyprland
+#  startx
+#fi
+
+[[ $- != *i* ]] && return
+
+angelfetch() {
+    roll=$((1 + RANDOM % 2))
+    case "$roll" in
+        1)
+			/usr/bin/fastfetch --sixel ~/.config/hyprdose/fetch-ame.png
+		;;
+        2)
+			/usr/bin/fastfetch --sixel ~/.config/hyprdose/fetch-kangel.png
+        ;;
+        *)
+			/usr/bin/fastfetch
+        ;;
+    esac
+}
+
+clear
+if test $(date +%d%m%y) -ne $(cat ~/.config/nyafish/motd_date)
+then
+	~/.config/nyafish/create_motd.sh
+fi
+cat ~/.config/nyafish/motd
+
+source /etc/os-release
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+
+PS1="\u@\h \W > "
+#angelfetch

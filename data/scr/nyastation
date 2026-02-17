@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd "$HOME/nyastation"
+./nyastation $1

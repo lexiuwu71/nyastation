@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+source ./data/pkg
+
+echo "Make sure you have community repos enabled!!! </etc/apk/repositories>"
+read
+
+cd ~/nyastation
+
+# System
+add github-cli git lsblk gptfdisk btrfs-progs e2fsprogs cryptsetup lvm2 lsblk cfdisk docs mandoc man-pages mandoc-apropos less less-doc wpa_supplicant musl file 
+# Kinda fun stuff like still kinda serious tho
+add vim ranger figlet lolcat@testing hyfetch@testing fastfetch
+
+$UAC cp ./setup/system/figlet-fonts/* /usr/share/figlet/fonts/

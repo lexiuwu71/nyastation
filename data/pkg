@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+source ./data/debug
+
+buf_paclist=""$NYASTATION"/data/!pkglist"
+paclist=""$NYASTATION"/data/pkglist"
+touch "$buf_paclist" "$paclist"
+#declare -p pac
+
+build() {
+	#buf_pac=($(tr '\n' ' ' < $buf_paclist))
+	#pac=($(tr '\n' ' ' < $paclist))
+
+	mapfile -t buf_pac < "$buf_paclist"
+	mapfile -t pac < "$paclist"
+	#mapfile -t pac < <(pacman -Qq)
+
+	add_pac=()
+	del_pac=()
+
+	echo -e "\nNyaStation System Build\n\nPackages:"
+
+	for i in "${buf_pac[@]}"; do
+		if ! grep -Fxq "$i" "$paclist"; then
+		#if [[ ! -z $(grep "$i" "$paclist") ]]; then
+			echo "  $GREEN+$i$RST"
+			add_pac+=("$i")
+		fi
+	done
+
+	for i in "${pac[@]}"; do
+		if ! grep -Fxq "$i" "$buf_paclist"; then
+		#if [[ -n $(grep "$i" "$buf_paclist") ]]; then
+			echo "  $RED-$i$RST"
+			del_pac+=("$i")
+		fi
+	done
+
+	echo -e "\n"$RED"This will modify your system.$RST"
+	read -p "  Proceed with build? [Y/n] " opt
+	if [[ "$opt" == "n" ]] || [[ "$opt" == "N" ]]; then
+		exit 1
+	fi
+
+	echo -e "\n $GREEN*$RST Sync package repositories"
+	$UAC apk update
+	if [[ -n "${del_pac[0]}" ]]; then
+		echo -e "\n $GREEN*$RST Remove old packages"
+		$UAC apk del "${del_pac[@]}"
+	fi
+	if [[ -n "${add_pac[0]}" ]]; then
+		echo -e "\n $GREEN*$RST Install packages"
+		$UAC apk add "${add_pac[@]}"
+	fi
+	echo " $GREEN*$RST Update and upgrade"
+	$UAC apk upgrade
+
+	mv "$buf_paclist" "$paclist"
+
+	debug ok "Done! Buffer packages installed, buffer reset."
+}
+
+add() {
+	for i in "$@"; do
+		if ! grep -Fxq "$i" "$buf_paclist"; then
+		#if [ -z $(grep "$i" "$buf_paclist") ]; then
+			echo "$i" >> $buf_paclist
+		fi
+	done
+}

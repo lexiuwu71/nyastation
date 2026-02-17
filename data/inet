@@ -1,0 +1,19 @@
+#!/bin/sh
+
+UAC="doas"
+
+echo "set a hostname"
+read HOST
+echo "$HOST" | $UAC tee /etc/hostname
+$UAC hostname -F /etc/hostname
+
+echo -ne "nameserver 1.1.1.1\nnameserver 1.0.0.1\n" | $UAC tee /etc/resolv.conf
+
+echo -ne "auto lo\niface lo inet loopback\n\nauto eth0\niface eth0 inet dhcp\n\nauto wlan0\niface wlan0 inet dhcp\n" | $UAC tee /etc/network/interfaces
+
+wpa_passphrase 'elpiratoperico_2.4g' 'nocellphones' | $UAC tee /etc/wpa_supplicant/wpa_supplicant.conf
+# wpa_supplicant -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf
+
+rc-service networking restart
+rc-service networking --quiet start &
+doas rc-update add networking boot

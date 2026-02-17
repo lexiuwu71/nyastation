@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+source ./data/color
+source ./data/pkg
+
+echo "Allow this app to make changes to your computer?"
+$UAC echo ""$CYAN"Installing!"$RST""
+if [[ $? -eq 1 ]]; then
+	echo ""$RED"Not allowed!"$RST" Aborting..."
+	exit 1
+fi
+
+WALLPAPER="$HOME/.wallpaper.png"
+
+add pavucontrol brightnessctl bash pipewire wireplumber pipewire-pulse pipewire-jack pipewire-alsa pavucontrol fastfetch bash cryptsetup clipboard build-base libx11-dev libxft-dev libxinerama-dev freetype-dev fontconfig-dev xorg-server xf86-input-libinput xinit eudev alpine-conf mesa-dri-gallium xeyes xclock xterm feh dunst conky brightnessctl xrandr mesa-dri-gallium mesa-va-gallium mesa-vulkan-intel xf86-video-vesa xf86-video-intel xf86-input-synaptics xf86-input-libinput xf86-input-wacom setxkbmap gcompat font-terminus font-jetbrains-mono-nerd font-jetbrains-mono
+
+$UAC setup-devd udev
+echo ""$GREEN" * "$RST"Setup eudev"
+
+#xf86-video-vmware xf86-video-nouveau xf86-video-nv xf86-video-ark xf86-video-amdgpu xf86-video-ati
+#linux-firmware-amdgpu linux-firmware-radeon mesa-vulkan-ati
+
+cp ./setup/suckless/bashrc $HOME/.bashrc
+cp ./setup/suckless/bash_profile $HOME/.bash_profile
+echo ""$GREEN" * "$RST"Created .bashrc and .bash_profile"
+
+cp ./setup/suckless/conkyrc $HOME/.conkyrc
+echo ""$GREEN" * "$RST"Created .conkyrc"
+
+cp ./setup/suckless/wallpaper.png $WALLPAPER
+echo -e "feh --bg-fill $WALLPAPER &\n#dunst &\n#mpd &\nconky &\npipewire &\n" > $HOME/xinitrc
+
+cat ./setup/suckless/xinitrc > $HOME/.xinitrc
+echo ""$GREEN" * "$RST"Created .xinitrc"
+
+##To start the pipewire user service and its wireplumber session manager:
+#rc-service -U pipewire start
+#rc-service -U wireplumber start
+##To enable the pipewire and wireplumber user services in Wayland, in Xorg change gui to default:
+#rc-update -U add pipewire gui
+#rc-update -U add wireplumber gui
+rc-update -U add pipewire default
+rc-update -U add wireplumber default
+echo ""$GREEN" * "$RST"Enabled pipewire and wireplumber"

@@ -1,0 +1,8 @@
+setxkbmap us &
+feh --bg-fill /home/lexi/.wallpaper.png &
+dunst &
+#mpd &
+conky &
+pipewire &
+
+exec dwm

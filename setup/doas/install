@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+source ./data/pkg
+
+add doas
+
+echo -ne "permit persist "$USER" as root\n" > ./setup/doas/doas.conf
+$UAC cp ./setup/doas/doas.conf /etc/doas.conf
+rm ./setup/doas/doas.conf
