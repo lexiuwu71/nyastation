@@ -1,3 +1,1 @@
-UHHHHHHHH i forgor what to add here :3
-
-this is like kinda broken maybe but it kinda works i think 
+everything works.... but there are issues most all the code is written in bash, and the dotfiles are kinda specialized but do feel free to contribute!
